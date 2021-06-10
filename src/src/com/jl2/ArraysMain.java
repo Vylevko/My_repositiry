@@ -22,7 +22,7 @@ public class ArraysMain {
         //array.orderArrayBubbble(way);
         //array.showArrayValues();
         out.println(3);
-        array.showArray(array.orderArrayFastStep1(array.returnArray(), 3));
+        //array.showArray(array.orderArrayFastStep1(array.returnArray(), 3));
 
     }
 	// write your code here
