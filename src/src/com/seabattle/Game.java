@@ -19,19 +19,26 @@ public class Game {
         scan = new Scanner(System.in);
     }
     public void startGame() {
-        for (int i = 0; shipsConf.length > i; i++) {
-        flot.add(new Ship(shipsConf[i],initPos[i], true));
-        }
+        createCheckShips();
+
     }
     public void showShips() {
         for (Ship k : flot) {
-            System.out.println(k.getShipPos());
+           k.showSpace();
+           // System.out.println(k.getShipinitPos());
         }
     }
-    private String setInitPos() {
-        System.out.println("Insert initial Pos for a ship. Example 'A2' ");
+    private String setInitPos(int i) {
+        System.out.println("Insert initial Pos for " + i + " ship. Example 'A2' ");
         String pos = scan.nextLine();
-        return "ZZZ";
+        return pos.substring(0,2);
 
+    }
+    private void createCheckShips() {
+        for (int i = 0; shipsConf.length > i; i++) {
+            flot.add(new Ship(shipsConf[i],setInitPos(i), true));
+            System.out.println("Создвли корабль "+ i + " с такой начальной точкой" + flot.get(i).getShipinitPos());
+            flot.get(i).calculateFullSpace();
+        }
     }
 }
