@@ -10,14 +10,20 @@ public class Ship {
     private ArrayList<String> space;
     private boolean isHorisontal;
     private String alphaSample = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public Ship (int size, String initPos, boolean isHorisontal) {
+    public Ship (int size) {
         this.size = size;
-        this.initPos = initPos;
-        this.isHorisontal = isHorisontal;
+        this.initPos = "XX";
+        this.isHorisontal = true;
         space = new ArrayList<String>(size);
     }
-    public String getShipinitPos() {
+    public String getShipInitPos() {
         return this.initPos;
+    }
+    public void setShipInitPos(String initPos) {
+        this.initPos = initPos;
+    }
+    public void horisontal(boolean isHorisontal) {
+        this.isHorisontal = isHorisontal;
     }
     public void calculateFullSpace() {
         space.add(initPos);
