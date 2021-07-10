@@ -6,46 +6,59 @@ import java.util.ArrayList;
 
 public class Ship {
     private int size;
-    private String initPos;
-    private ArrayList<String> space;
+    private int[] initPos;
+    private ArrayList<int[]> space;
+    private ArrayList<int[]> extSpace;
     private boolean isHorisontal;
-    private String alphaSample = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public Ship (int size) {
+    private int num;
+    public Ship (int size, int num) {
         this.size = size;
-        this.initPos = "XX";
+        this.initPos = new int[]{0,0};
         this.isHorisontal = true;
-        space = new ArrayList<String>(size);
+        this.space = new ArrayList<int[]>(size);
+        this.extSpace = new ArrayList<int[]>();
+        this.num = num;
     }
-    public String getShipInitPos() {
+
+
+    public ArrayList<int[]> getSpace() {
+        return this.space;
+    }
+
+    public int[] getShipInitPos() {
         return this.initPos;
     }
-    public void setShipInitPos(String initPos) {
+
+    public int getSize() { return this.size;}
+
+    public void setShipInitPos(int[] initPos) {
         this.initPos = initPos;
     }
+
     public void horisontal(boolean isHorisontal) {
         this.isHorisontal = isHorisontal;
     }
+
     public void calculateFullSpace() {
-        space.add(initPos);
+       // space.add(initPos);
         if (isHorisontal) {
-           String alph = alphaSample.substring(alphaSample.indexOf(initPos.substring(0,1))+1);
            // System.out.println(alph);
-            for (int i = 1; i < size; i++) {
-                space.add(alph.substring(i-1,i)+initPos.substring(1));
+            for (int i = initPos[0]; i < initPos[0] + size; i++) {
+                space.add(new int[] {i,initPos[1]});
             }
         } else {
-            for (int i = 1; i < size; i++) {
+            for (int i = initPos[1]; i < initPos[1] + size; i++) {
                 //System.out.println(i + " DEBUG " + initPos.substring(0,1));
                // System.out.println("DEBUG " + String.valueOf(Integer.parseInt(initPos.substring(1))+1));
-                space.add(initPos.substring(0,1)+String.valueOf(Integer.parseInt(initPos.substring(1))+i));
+                space.add(new int[]{initPos[0],i});
             }
         }
     }
-    public void showSpace() {
-        for (String a : space) {
-            System.out.print(a + " ");
+    private void calculateExtSpace() {
+        for (int i = 0; i < size; i ++) {
+
         }
-        System.out.println("");
+
     }
 
 }
