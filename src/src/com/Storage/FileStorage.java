@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 
 public class FileStorage {
-    private List<String> list;
+    private volatile List<String> list;
     private String path;
 
     public FileStorage(String path) {
@@ -22,7 +22,7 @@ public class FileStorage {
     public List<String> getList() {
         return list;
     }
-
+    //to read storage from folder, if no such folder, create path
     public File openCreateStorage(String path) {
         File dir = new File(path);
         if (dir.exists()) {
@@ -37,7 +37,7 @@ public class FileStorage {
 
         return dir;
     }
-
+    //not to put keys longer then 128
     public static String checkKeyLength(String key) {
         if (key.length() > 128) {
             key = key.substring(0, 128);
@@ -45,27 +45,29 @@ public class FileStorage {
         }
         return key;
     }
-
+    //if key exists in internal list
     private boolean keyExists(String key) {
         return list.contains(key);
     }
-
+    // get element with key
     public FileStorageElement getFile(String key) {
         key = checkKeyLength(key);
-        FileStorageElement element = null;
-        if (keyExists(key)) {
-            try (FileInputStream fi = new FileInputStream(getFilePath(key));
+        FileStorageElement element = new FileStorageElement(key,"");
+        File file = getFilePath(key);
+            try (FileInputStream fi = new FileInputStream(file);
                  ObjectInputStream oi = new ObjectInputStream(fi);) {
-
                 element = (FileStorageElement) oi.readObject();
-            } catch (Exception e) {
+            } catch (FileNotFoundException e) {
+                System.out.println("No file with such key "+ key);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
-        } else System.out.println("Key doesn't exist");
         return element;
     }
-
-    private void updateList(String key, char action) {
+    //actually not used
+    private synchronized void updateList(String key, char action) {
         key = checkKeyLength(key);
         switch (action) {
             case 'R':
@@ -76,7 +78,7 @@ public class FileStorage {
                 break;
         }
     }
-
+    //save file on disc
     public void putFile(String key, String value) {
         key = checkKeyLength(key);
         FileStorageElement element = new FileStorageElement(key, value);
@@ -88,37 +90,37 @@ public class FileStorage {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (!keyExists(key)) {
-            updateList(key, 'I');
-        }
     }
-
+    //remove
     public void removeFile(String key) {
-        if (keyExists(key)) {
             if (getFilePath(key).delete()) {
-                updateList(key, 'R');
                 System.out.println("Removed file=> " + key);
             }
-        }
     }
-
+    //listing all elements in format Showing all key = value
     public void showAllFilesKeys() {
         System.out.println("Showing all key = value");
+        refreshList();
         list.stream().forEach(e -> System.out.println(getFile(e).toString()));
     }
-
+    //show list of file names
     public void showList() {
         System.out.println("Showing list");
+        refreshList();
         list.stream().forEach(n -> System.out.println(n));
     }
-
+    //create File object
     private File getFilePath(String key) {
         return new File(this.path + "\\" + key);
     }
-    public void refreshList(){
+    //reread list of file names from disc
+    public void refreshList() {
         this.list = new ArrayList<>(Arrays.asList(getFilePath("").list()));
     }
-    public long countFiles(){
+
+    public long countFiles() {
+        refreshList();
         return list.stream().count();
     }
+
 }
